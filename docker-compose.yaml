@@ -1,0 +1,30 @@
+version: '3.3'
+
+networks:
+ csvserver-prometheus-bridge:
+
+
+services:
+ csvserver:
+    image: infracloudio/csvserver:latest
+    volumes:
+      - /csvserver/inputFile:/csvserver/inputdata:z
+    environment:
+      CSVSERVER_BORDER: Orange
+    ports:
+      - "9393:9300"
+    networks:
+      - csvserver-prometheus-bridge
+
+ prometheus:
+    image: prom/prometheus:v2.22.0
+    volumes:
+      - /csvserver/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - csvserver
+    networks:
+      - csvserver-prometheus-bridge   
+
+
